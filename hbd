@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Bday, Milea ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent: #ff4b5c;
+      --accent-2: #ff6b81;
+      --card-bg: #ffffff;
+    }
+    *{box-sizing:border-box}
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffd1dc 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #222;
+      overflow: hidden;
+    }
+    .card {
+      background: var(--card-bg);
+      width: 92%;
+      max-width: 460px;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+      text-align: center;
+      position: relative;
+      z-index: 3;
+      animation: popIn 600ms cubic-bezier(.2,.9,.3,1);
+    }
+    h1{
+      margin: 0 0 8px 0;
+      font-size: 1.7rem;
+      color: var(--accent);
+    }
+    .emoji { font-size: 1.6rem; margin: 10px 0; }
+    p { margin: 10px 0; line-height: 1.45; font-size: 1rem; color:#333; }
+    .from { margin-top: 12px; font-weight:600; color:#444; }
+    .controls {
+      margin-top: 18px;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight:600;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(255,75,92,0.2);
+    }
+    .btn:active{ transform: translateY(1px) }
+    .btn.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid rgba(255,75,92,0.12);
+      font-weight:600;
+    }
+    @keyframes popIn {
+      from { transform: translateY(8px) scale(.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    canvas { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    /* small note style */
+    .note { margin-top:10px; font-size:0.85rem; color:#666; }
+  </style>
+</head>
+<body>
+  <div class="card" role="article" aria-label="Kartu Ucapan Ulang Tahun untuk Milea">
+    <h1>🎉 Happy Bday, Milea ✨</h1>
+    <div class="emoji">🥳🎂🎁</div>
+
+    <p>
+      “Happy Bday, Milea ✨ Semoga panjang umur, sehat selalu, and banyak hal baik yang dateng di idup kmu. Aku inget dulu kmu sempet bilang ‘tunggu sampe ultah’ sebelum ky gini, jadi… gw cuma mau nepatin itu aja. Semoga lu bahagia ya hari ini.”
+    </p>
+
+    <div class="from">— Dari: <strong>Brow</strong></div>
+
+    <div class="controls">
+      <button id="playBtn" class="btn" aria-pressed="false">▶️ Putar Musik & Confetti</button>
+      <button id="stopBtn" class="btn secondary">⏸️ Stop</button>
+    </div>
+
+    <div class="note">Tip: klik "Putar Musik & Confetti" supaya efek dan musiknya jalan di semua browser.</div>
+  </div>
+
+  <!-- audio (ganti link MP3 di bawah kalau mau lagu sendiri) -->
+  <audio id="bg-music" loop preload="auto">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    Browser kamu tidak mendukung audio.
+  </audio>
+
+  <!-- confetti canvas -->
+  <canvas id="confetti"></canvas>
+
+  <script>
+    // Audio controls
+    const music = document.getElementById('bg-music');
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    playBtn.addEventListener('click', () => {
+      music.play().catch(()=>{/* ignore if browser restricts until user interacts, but this is an interaction */});
+      startConfetti();
+      playBtn.setAttribute('aria-pressed','true');
+    });
+
+    stopBtn.addEventListener('click', () => {
+      music.pause();
+      stopConfetti();
+      playBtn.setAttribute('aria-pressed','false');
+    });
+
+    // Confetti implementation (simple particle system)
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = innerWidth;
+    let H = canvas.height = innerHeight;
+    window.addEventListener('resize', () => {
+      W = canvas.width = innerWidth;
+      H = canvas.height = innerHeight;
+    });
+
+    const pieces = [];
+    function makePiece() {
+      return {
+        x: Math.random()*W,
+        y: -10 - Math.random()*H*0.2,
+        size: Math.random()*8+6,
+        tilt: Math.random()*20 - 10,
+        angle: Math.random()*Math.PI*2,
+        speed: Math.random()*2 + 1.2,
+        drift: Math.random()*1.6 - 0.8,
+        color: `hsl(${Math.floor(Math.random()*360)},80%,55%)`,
+        rotationSpeed: (Math.random()*0.06) - 0.03,
+        lifetime: 0
+      };
+    }
+
+    let confettiTimer = null;
+    function startConfetti() {
+      // create pieces
+      for(let i=0;i<220;i++) pieces.push(makePiece());
+      if (!confettiTimer) confettiTimer = requestAnimationFrame(update);
+    }
+    function stopConfetti() {
+      if (confettiTimer) {
+        cancelAnimationFrame(confettiTimer);
+        confettiTimer = null;
+      }
+      pieces.length = 0;
+      ctx.clearRect(0,0,W,H);
+    }
+
+    function update() {
+      ctx.clearRect(0,0,W,H);
+      for (let i = pieces.length-1; i >= 0; i--) {
+        const p = pieces[i];
+        p.y += p.speed + Math.sin(p.angle)*0.5;
+        p.x += p.drift + Math.cos(p.angle)*0.3;
+        p.angle += p.rotationSpeed;
+        p.tilt += 0.05;
+        p.lifetime++;
+        // draw as rotated rectangle
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+        ctx.restore();
+
+        if (p.y > H + 20 || p.x < -50 || p.x > W + 50) {
+          // respawn top
+          pieces[i] = makePiece();
+        }
+      }
+      confettiTimer = requestAnimationFrame(update);
+    }
+
+    // Accessibility: allow space/enter to trigger play when focus on button
+    playBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        playBtn.click();
+      }
+    });
+    stopBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        stopBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>

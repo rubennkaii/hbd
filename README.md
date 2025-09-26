@@ -6,9 +6,10 @@
   <title>Happy Bday Milea</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      background: linear-gradient(to right, #ffdde1, #ee9ca7);
+      background: linear-gradient(to right, #0f0f0f, #1a1a2e, #16213e);
+      color: #f5f5f5;
       height: 100vh;
       margin: 0;
       display: flex;
@@ -18,24 +19,38 @@
       overflow: hidden;
     }
     .card {
-      background: white;
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 25px;
       border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+      max-width: 500px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 2s ease forwards;
+    }
+    h2 {
+      color: #ffcc70;
+    }
+    p {
+      line-height: 1.6;
     }
     button {
-      margin-top: 15px;
-      padding: 10px 20px;
+      margin-top: 20px;
+      padding: 12px 25px;
       font-size: 16px;
       border: none;
       border-radius: 10px;
-      background: #ff4b2b;
+      background: linear-gradient(45deg, #ff4b2b, #ff416c);
       color: white;
       cursor: pointer;
-      transition: 0.3s;
+      transition: transform 0.2s;
+      opacity: 0;
+      animation: fadeIn 2s ease forwards;
+      animation-delay: 2s;
     }
     button:hover {
-      background: #ff416c;
+      transform: scale(1.1);
     }
     canvas {
       position: fixed;
@@ -44,6 +59,11 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -57,7 +77,7 @@
   </div>
 
   <canvas id="confetti"></canvas>
-  <audio id="music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <audio id="music" src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_0c8f6adcd2.mp3?filename=romantic-piano-ambient-124008.mp3"></audio>
 
   <script>
     function playSurprise() {

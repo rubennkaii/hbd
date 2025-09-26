@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Bday Milea</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #0f0f0f, #1a1a2e, #16213e);
+      color: #f5f5f5;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 25px;
+      border-radius: 15px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+      max-width: 500px;
+    }
+    h2 {
+      color: #ffcc70;
+    }
+    p {
+      line-height: 1.6;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(45deg, #ff4b2b, #ff416c);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.1);
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Happy Bday, Milea ✨</h2>
+    <p>Semoga panjang umur, sehat selalu, and banyak hal baik yang dateng di idup kmu.</p>
+    <p>Aku inget dulu kmu sempet bilang "tunggu sampe ultah" sebelum ky gini, jadi… gw cuma mau nepatin itu aja.</p>
+    <p>Semoga lu bahagia ya hari ini. 🎉</p>
+    <button onclick="playSurprise()">Klik di sini 🎁</button>
+  </div>
+
+  <canvas id="confetti"></canvas>
+  <audio id="music" src="https://cdn.pixabay.com/download/audio/2022/10/30/audio_0c8f6adcd2.mp3?filename=romantic-piano-ambient-124008.mp3"></audio>
+
+  <script>
+    function playSurprise() {
+      document.getElementById("music").play();
+      startConfetti();
+    }
+
+    // Confetti effect
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const confetti = Array.from({ length: 150 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 10 + 5,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+      tilt: Math.random() * 10 - 10
+    }));
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.fillStyle = c.color;
+        ctx.fillRect(c.x, c.y, c.r, c.r);
+        ctx.fill();
+      });
+      updateConfetti();
+    }
+
+    function updateConfetti() {
+      confetti.forEach(c => {
+        c.y += c.d;
+        if (c.y > canvas.height) {
+          c.y = -10;
+          c.x = Math.random() * canvas.width;
+        }
+      });
+    }
+
+    function startConfetti() {
+      setInterval(drawConfetti, 20);
+    }
+  </script>
+</body>
+</html>
